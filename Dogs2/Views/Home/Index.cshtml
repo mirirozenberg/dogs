@@ -1,0 +1,115 @@
+﻿@model IEnumerable<Dogs2.Models.QueueModel>;
+@using Microsoft.AspNetCore.Http
+@{
+    ViewData["Title"] = "Home Page";
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+}
+
+<h2>Index</h2>
+
+<p>
+    <a asp-action="Edit">Create New</a>
+</p>
+<form asp-action="Index" method="get">
+    <div class="form-actions no-color">
+        <p>
+            Filter by name: <input type="text" name="filterString" value="@ViewData["currentFilter"]" />
+            Filter by Date: <input type="date"  name="filterDate" value="@ViewData["currentFilter2"]" />
+            <input type="submit" value="Search" class="btn btn-default" /> |
+            <a asp-action="Index"> Back to Full List</a>
+        </p>
+    </div>
+</form>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]">Name</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["Date1SortParm"]">Queue Date</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder="@ViewData["Date2SortParm"]">insert Date</a>
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            var userId = Context.Session.GetString("userId");
+        }
+       
+        @foreach (var item in Model)
+        { 
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.users1.displayName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.queueDateTime)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.insertDateTime)
+                </td>
+                <td>
+                    @if (item.userId.ToString() == @userId)
+                    {
+                        <a asp-action="Details" asp-route-id="@item.queueId">Details</a><span> | </span>;
+                        <a asp-action="Edit" asp-route-id="@item.queueId">Edit</a><span> | </span>;
+                        @Html.ActionLink(
+                            "Delete",
+                            "Delete",
+                            "Home",
+                            new { confirm = true, id =item.queueId },
+                            new { onclick = "return confirm('Do you really want to delete this queue?')" })}
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+@*@
+    <scripts>
+        <script src="~/Scripts/jquery-3.4.1.min.js"></script>
+        <script src="~/Scripts/bootstrap.js"></script>
+        <script src="~/Scripts/bootstrap.min.js"></script>
+        <script>
+
+            var TeamDetailPostBackURL = '/Home/Details';
+            $(function () {
+                $(".anchorDetail").click(function () {
+                    debugger;
+                    var $buttonClicked = $(this);
+                    var id = $buttonClicked.attr('data-id');
+                    var options = { "backdrop": "static", keyboard: true };
+                    $.ajax({
+                        type: "GET",
+                        url: TeamDetailPostBackURL,
+                        contentType: "application/json; charset=utf-8",
+                        data: { "Id": id },
+                        datatype: "json",
+                        success: function (data) {
+                            debugger;
+                            $('#myModalContent').html(data);
+                            $('#myModal').modal(options);
+                            $('#myModal').modal('show');
+
+                        },
+                        error: function () {
+                            alert("Dynamic content load failed.");
+                        }
+                    });
+                });
+                //$("#closebtn").on('click',function(){
+                //    $('#myModal').modal('hide');
+
+                $("#closbtn").click(function () {
+                    $('#myModal').modal('hide');
+                });
+            });
+        </script>*@
